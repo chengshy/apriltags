@@ -4,12 +4,12 @@
        to connect to an OpenNI device (e.g. Kinect). 
   -->
   <node pkg="apriltags" type="apriltags" name="apriltags" output="screen">
-    <param name="~default_tag_size" value="0.037" />
+    <param name="~default_tag_size" value="0.0654052" />
 
     <param name="~viewer" value="true" />
     <param name="~publish_detections_image" value="true" />
 
-    <param name="~display_type" value="CUBE" />
+    <param name="~display_type" value="ARROW" />
     <param name="~marker_thickness" value="0.02" />
 
     <rosparam command="delete" param="tag_data" />

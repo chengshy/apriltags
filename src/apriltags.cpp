@@ -55,6 +55,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "apriltags.h"
 #include <apriltags/AprilTagDetections.h>
+#include <tf2_msgs/TFMessage.h>
 
 
 using namespace std;
@@ -285,7 +286,8 @@ void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
     apriltags::AprilTagDetections apriltag_detections;
     apriltag_detections.header.frame_id = msg->header.frame_id;
     apriltag_detections.header.stamp = msg->header.stamp;
-
+    tf2_msgs::TFMessage tf_msg;
+    
     cv_bridge::CvImagePtr subscribed_color_ptr;
     if ((viewer_) || (publish_detections_image_))
     {
@@ -383,6 +385,20 @@ void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
         }
         apriltag_detections.detections.push_back(apriltag_det);
 
+        // Fill in Apriltag detection transform
+        geometry_msgs::TransformStamped tag_tfs;
+        tag_tfs.header = marker_transform.header;
+        tag_tfs.child_frame_id = convert.str();
+        tag_tfs.transform.translation.x = pose(0, 3);
+        tag_tfs.transform.translation.y = pose(1, 3);
+        tag_tfs.transform.translation.z = pose(2, 3);
+        tag_tfs.transform.rotation.x = q.x();
+        tag_tfs.transform.rotation.y = q.y();
+        tag_tfs.transform.rotation.z = q.z();
+        tag_tfs.transform.rotation.w = q.w();
+        tf_msg.transforms.push_back(tag_tfs);
+
+
         if ((viewer_) || (publish_detections_image_))
         {
             if (display_marker_outline_)
@@ -418,6 +434,7 @@ void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
     }
     marker_publisher_.publish(marker_transforms);
     apriltag_publisher_.publish(apriltag_detections);
+    tf_publisher_.publish(tf_msg);
 
     if(publish_detections_image_)
     {
@@ -434,7 +451,8 @@ void ConnectCallback(const ros::SingleSubscriberPublisher& info)
 {
     // Check for subscribers.
     uint32_t subscribers = marker_publisher_.getNumSubscribers()
-                           + apriltag_publisher_.getNumSubscribers();
+                           + apriltag_publisher_.getNumSubscribers()
+                           + tf_publisher_.getNumSubscribers();
     ROS_DEBUG("Subscription detected! (%d subscribers)", subscribers);
 
     if(subscribers && !running_)
@@ -524,6 +542,8 @@ void SetupPublisher()
             disconnect_callback);
     apriltag_publisher_ = node_->advertise<apriltags::AprilTagDetections>(
             DEFAULT_DETECTIONS_TOPIC, 1, connect_callback, disconnect_callback);
+    tf_publisher_ = node_->advertise<tf2_msgs::TFMessage>(
+            "/tf", 1, connect_callback, disconnect_callback);
 
     if(publish_detections_image_)
     {

@@ -21,6 +21,7 @@ ros::Publisher apriltag_publisher_;
 image_transport::Publisher image_publisher_;
 ros::Subscriber info_subscriber;
 image_transport::Subscriber image_subscriber;
+ros::Publisher tf_publisher_;
 
 // AprilTag parts
 TagFamily* family_;
