@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   message_generation
   geometry_msgs
+  actionlib
+  actionlib_msgs
 )
 find_package(OpenCV REQUIRED)
 find_package(Eigen REQUIRED)
@@ -24,9 +26,15 @@ add_message_files(DIRECTORY msg FILES
     AprilTagDetections.msg
 )
 
+add_action_files(
+    DIRECTORY action 
+    FILES EnableAprilTagsDetector.action
+)
+
 generate_messages(DEPENDENCIES
     std_msgs
     geometry_msgs
+    actionlib_msgs
 )
 
 # Set up the ROS Catkin package settings

@@ -8,17 +8,18 @@
 
     <param name="~viewer" value="true" />
     <param name="~publish_detections_image" value="true" />
+    <param name="~enable_detector" value="true" />
 
     <param name="~display_type" value="ARROW" />
     <param name="~marker_thickness" value="0.02" />
 
-    <rosparam command="delete" param="tag_data" />
-    <rosparam param="tag_data">
+    <!--<rosparam command="delete" param="tag_data" />-->
+    <!--<rosparam param="~tag_data">
       "1": 
         size: 0.035
       "2":
         size: 0.048
-    </rosparam>
+    </rosparam>-->
 
     <remap from="~image" to="/usb_cam/image_raw"/>
     <remap from="~camera_info" to="/usb_cam/camera_info"/>

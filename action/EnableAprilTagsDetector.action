@@ -1,0 +1,8 @@
+# Define goal
+# Target detector status
+std_msgs/Bool goal
+---
+# Define reasult
+# Detector status
+std_msgs/Bool result
+---

@@ -29,5 +29,7 @@
   <depend>std_msgs</depend>
   <depend>visualization_msgs</depend>
   <depend>yaml-cpp</depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
   <exec_depend>message_runtime</exec_depend>
 </package>

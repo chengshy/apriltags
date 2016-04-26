@@ -1,3 +1,6 @@
+#include <actionlib/server/simple_action_server.h>
+#include <apriltags/EnableAprilTagsDetectorAction.h>
+
 const double SMALL_TAG_SIZE = 0.0358968;
 const double MED_TAG_SIZE = 0.06096;
 const double PAGE_TAG_SIZE = 0.165;
@@ -46,6 +49,10 @@ bool display_marker_outline_;
 bool display_marker_id_;
 bool display_marker_edges_;
 bool display_marker_axes_;
+bool enable_detector_;
+
+typedef actionlib::SimpleActionServer<apriltags::EnableAprilTagsDetectorAction> Server;
+Server* detector_server_;
 
 void GetMarkerTransformUsingOpenCV(const TagDetection& detection, Eigen::Matrix4d& transform, cv::Mat& rvec, cv::Mat& tvec);
 
@@ -67,3 +74,4 @@ void GetParameterValues();
 void SetupPublisher();
 void InitializeTags();
 void InitializeROSNode();
+void enableAprilTagsDetectorCallback(const apriltags::EnableAprilTagsDetectorGoalConstPtr& goal, Server* as);

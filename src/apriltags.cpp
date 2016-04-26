@@ -254,6 +254,11 @@ void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
         return;
     }
 
+    if(!enable_detector_){
+        ROS_INFO("Detector is disabled");
+        return;
+    }
+
     // Get the image
     cv_bridge::CvImagePtr subscribed_ptr;
     try
@@ -508,6 +513,8 @@ void GetParameterValues()
     node_->param("display_marker_edges", display_marker_edges_, false);
     node_->param("display_marker_axes", display_marker_axes_, false);
 
+    node_->param("enable_detector", enable_detector_, true);
+
     ROS_INFO("Tag Family: %s", tag_family_name_.c_str());
 
     // Load tag specific configuration values.
@@ -563,6 +570,17 @@ void InitializeROSNode(int argc, char **argv)
     ros::init(argc, argv, "apriltags");
     node_ =  boost::make_shared<ros::NodeHandle>("~");
     image_ = boost::make_shared<image_transport::ImageTransport>(*node_);
+    detector_server_ = new Server(*node_, "/enable_apriltags_detector", 
+                                    boost::bind(&enableAprilTagsDetectorCallback, _1, detector_server_), false);
+    detector_server_->start();
+}
+
+void enableAprilTagsDetectorCallback(const apriltags::EnableAprilTagsDetectorGoalConstPtr& goal, Server* as)
+{
+  enable_detector_ = goal->goal.data;
+  apriltags::EnableAprilTagsDetectorResult result;
+  result.result.data = enable_detector_;
+  detector_server_->setSucceeded(result);
 }
 
 int main(int argc, char **argv)
@@ -587,6 +605,7 @@ int main(int argc, char **argv)
     cvDestroyWindow("AprilTags");
     delete detector_;
     delete family_;
+    delete detector_server_;
 
     return EXIT_SUCCESS;
 }
