@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(OpenCV REQUIRED)
 find_package(Eigen REQUIRED)
+find_package(CGAL REQUIRED)
 
 # Import the yaml-cpp libraries.
 include(FindPkgConfig)
